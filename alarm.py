@@ -92,7 +92,7 @@ class Alarm:
 
     def stop_alarm(self, index):
         self.playing_sound.stop()
-        self.alarms[index][0].config(bg="SystemButtonFace")
+        self.alarms[index][0].config(bg="orange")
         self.stop_buttons[index].grid_forget()
         enable_time = datetime.now() + timedelta(minutes=1)
         try:
@@ -102,7 +102,7 @@ class Alarm:
 
     def snooze_alarm(self, index):
         self.playing_sound.stop()
-        self.alarms[index][0].config(bg="light blue")
+        self.alarms[index][0].config(bg="yellow")
         self.stop_buttons[index].grid_forget()
         self.snooze_buttons[index].grid_forget()
         enable_time = datetime.now() + timedelta(minutes=1)
@@ -180,8 +180,8 @@ class Alarm:
                 self.playing_sound = self.sound.play()
                 self.alarms[i][0].config(bg="red")
                 self.alarms[i][2] = True
-                self.stop_buttons[i].grid(column=3, row=i)
-                self.snooze_buttons[i].grid(column=4, row=i)
+                self.stop_buttons[i].grid(column=3, row=i, padx=10)
+                self.snooze_buttons[i].grid(column=4, row=i, padx=10)
             try:
                 if datetime.now().strftime("%H:%M:%S") == self.alarms[i][3].strftime("%H:%M:%S"):
                     self.alarms[i][2] = False
