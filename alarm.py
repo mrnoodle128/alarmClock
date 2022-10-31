@@ -50,6 +50,12 @@ class Alarm:
         self.alarm_data = self.load_alarms()
 
     def create_alarm(self):
+        for i, _, in enumerate(self.alarms):
+            try:
+                if f"{self.hours.get()}:{self.minutes.get()}" == self.alarms[i][0].cget("text"):
+                    return
+            except IndexError:
+                pass
         stop_button = Button(self.alarm_frame, text="Stop", command=lambda m=len(self.alarms): self.stop_alarm(m),
                              bg="light blue")
         snooze_button = Button(self.alarm_frame, text="Snooze", bg="light blue",
@@ -91,9 +97,13 @@ class Alarm:
         self.draw_alarms()
 
     def stop_alarm(self, index):
-        self.playing_sound.stop()
+        try:
+            self.playing_sound.stop()
+        except AttributeError:
+            pass
         self.alarms[index][0].config(bg="orange")
         self.stop_buttons[index].grid_forget()
+        self.snooze_buttons[index].grid_forget()
         enable_time = datetime.now() + timedelta(minutes=1)
         try:
             self.alarms[index][3] = enable_time
@@ -101,7 +111,10 @@ class Alarm:
             self.alarms[index].insert(3, enable_time)
 
     def snooze_alarm(self, index):
-        self.playing_sound.stop()
+        try:
+            self.playing_sound.stop()
+        except AttributeError:
+            pass
         self.alarms[index][0].config(bg="yellow")
         self.stop_buttons[index].grid_forget()
         self.snooze_buttons[index].grid_forget()
@@ -177,7 +190,10 @@ class Alarm:
         for i, _ in enumerate(self.alarm_data):
             if f"{self.alarm_data[i][0]}:{self.alarm_data[i][1]}" == self.time.time[0:-3] and \
                     self.alarm_data[i][2] == 1 and not self.alarms[i][2]:
-                self.playing_sound = self.sound.play()
+                try:
+                    self.playing_sound = self.sound.play()
+                except:
+                    pass
                 self.alarms[i][0].config(bg="red")
                 self.alarms[i][2] = True
                 self.stop_buttons[i].grid(column=3, row=i, padx=10)
@@ -187,7 +203,10 @@ class Alarm:
                     self.alarms[i][2] = False
                 elif datetime.now().strftime("%H:%M:%S") == self.alarms[i][4].strftime("%H:%M:%S")\
                         and not self.alarms[i][2]:
-                    self.playing_sound = self.sound.play()
+                    try:
+                        self.playing_sound = self.sound.play()
+                    except:
+                        pass
                     self.alarms[i][0].config(bg="red")
                     self.alarms[i][2] = True
                     self.stop_buttons[i].grid(column=3, row=i, padx=10)
