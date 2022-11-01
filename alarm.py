@@ -48,6 +48,7 @@ class Alarm:
                                      state=DISABLED if len(self.alarms) >= 5 else ACTIVE)
 
         self.alarm_data = self.load_alarms()
+        print(self.alarm_data)
 
     def create_alarm(self):
         for i, _, in enumerate(self.alarms):
@@ -76,19 +77,29 @@ class Alarm:
 
         self.draw_alarms()
 
-        self.alarm_data.append([self.hours.get(), self.minutes.get(), 1])
+        self.alarm_data.append([self.hours.get(), self.minutes.get(), "1"])
         self.save_alarms()
 
     def delete_alarm(self, index):
+        try:
+            self.playing_sound.stop()
+        except AttributeError:
+            pass
         self.alarms[index][0].destroy()
         self.checkboxes[index].destroy()
         self.delete_buttons[index].destroy()
+        self.stop_buttons[index].destroy()
+        self.snooze_buttons[index].destroy()
         self.alarms.pop(index)
         self.checkboxes.pop(index)
         self.delete_buttons.pop(index)
+        self.stop_buttons.pop(index)
+        self.snooze_buttons.pop(index)
         self.alarm_data.pop(index)
         for i, _ in enumerate(self.delete_buttons):
             self.delete_buttons[i].config(command=lambda m=i: self.delete_alarm(m))
+            self.stop_buttons[i].config(command=lambda m=i: self.delete_alarm(m))
+            self.snooze_buttons[i].config(command=lambda m=i: self.delete_alarm(m))
         if len(self.alarms) >= 5:
             self.confirm_button.config(state="disabled")
         else:
@@ -188,8 +199,9 @@ class Alarm:
     def update(self):
         self.time.update_time()
         for i, _ in enumerate(self.alarm_data):
+            print(self.alarm_data[i][2])
             if f"{self.alarm_data[i][0]}:{self.alarm_data[i][1]}" == self.time.time[0:-3] and \
-                    self.alarm_data[i][2] == 1 and not self.alarms[i][2]:
+                    self.alarm_data[i][2] == "1" and not self.alarms[i][2]:
                 try:
                     self.playing_sound = self.sound.play()
                 except:
